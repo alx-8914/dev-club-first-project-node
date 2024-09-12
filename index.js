@@ -24,13 +24,15 @@ app.use(myFirstMiddleware)//Executando o meu primeiro middleware
 */
 //Projeto Node.js via terminal e insomnia.
 //Primeiro Servidor em rota Tipo = 'Get'
-const express = require('express')
-const uuid = require('uuid')
+const express = require('express');
+const uuid = require('uuid');
+const cors = require('cors');
 
-const port = 3000
+const port = 3001
 const status = 404
-const app = express()
-app.use(express.json())// Avisar  pro express usar json no body
+const app = express();
+app.use(express.json()); // Avisar  pro express usar json no body
+app.use(cors()); //Avisar pro express usar cors, obs no modo prof. cadastrar um link(site)
 
 //Rota respondia com mensagem 'Hello World'
 const users = []
@@ -51,23 +53,22 @@ const checkUserId = (req, res, next) => {
 }
 
 app.get('/users', (req, res) => {
-  console.log('A rota foi chamda')
+
   return res.json({ users })
 })
 
 app.post('/users', (req, res) => {
   const { name, age } = req.body
-  const user = { id: uuid.v4(), name, age }
-  //console.log(uuid.v4())//75760740-380f-4c6c-8100-8ae1075fc9a4 cada usuário com id único criado
+  const user = { id: uuid.v4(), name, age }  // Gera um novo usuário com um ID único
+  
+  users.push(user)  // Adiciona o novo usuário à lista de usuários
 
-  users.push(user)
-
-  return res.status(201).json({ users })
-})
+  return res.status(201).json(user) // Retorna apenas o novo usuário
+});
 
 app.put('/users/:id', checkUserId, (req, res) => {
   const { name, age } = req.body
-  const index = req.findIndex
+  const index = req.userIndex
   const id = req.userId
 
   const updatedUser = { id, name, age } //Usuário Autualizaado
@@ -79,13 +80,13 @@ app.put('/users/:id', checkUserId, (req, res) => {
 })
 
 app.delete('/users/:id', checkUserId, (req, res) => {
-  const index = req.findIndex
+  const index = req.userIndex
 
   users.splice(index, 1) //Remove o usuário do array users
 
-  return res.status(204).json()
+  return res.status(204).json();
 })
-//Porta de Acesso Única = Usuando nodemon 
+//Porta de Acesso Única = Usando nodemon 
 app.listen(port, () => {
-  console.log(`🚀Server started on port ${port}`)
-})
+  console.log(`🚀Server started on port ${port}`);
+});
